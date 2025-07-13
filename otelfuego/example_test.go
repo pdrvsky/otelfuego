@@ -183,7 +183,7 @@ func TestMiddleware_DistributedTracing(t *testing.T) {
 
 	// Execute request
 	handler.ServeHTTP(w, req)
-	
+
 	// End parent span so it gets exported
 	parentSpan.End()
 

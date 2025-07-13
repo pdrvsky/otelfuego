@@ -11,10 +11,10 @@ import (
 
 // config holds the configuration for the OpenTelemetry middleware
 type config struct {
-	TracerProvider     trace.TracerProvider
-	Propagators        propagation.TextMapPropagator
-	Filter             Filter
-	SpanNameFormatter  SpanNameFormatter
+	TracerProvider    trace.TracerProvider
+	Propagators       propagation.TextMapPropagator
+	Filter            Filter
+	SpanNameFormatter SpanNameFormatter
 }
 
 // Option is a function that configures the middleware
@@ -40,11 +40,11 @@ func newConfig(opts ...Option) *config {
 	c := &config{
 		SpanNameFormatter: defaultSpanNameFormatter,
 	}
-	
+
 	for _, opt := range opts {
 		opt.apply(c)
 	}
-	
+
 	return c
 }
 
@@ -71,9 +71,10 @@ func WithPropagators(propagators propagation.TextMapPropagator) Option {
 // The filter function should return true for requests that should be traced, false otherwise.
 //
 // Example:
-//   WithFilter(func(req *http.Request) bool {
-//       return !strings.Contains(req.URL.Path, "/health")
-//   })
+//
+//	WithFilter(func(req *http.Request) bool {
+//	    return !strings.Contains(req.URL.Path, "/health")
+//	})
 func WithFilter(filter Filter) Option {
 	return optionFunc(func(c *config) {
 		c.Filter = filter
@@ -83,9 +84,10 @@ func WithFilter(filter Filter) Option {
 // WithSpanNameFormatter configures the middleware to use a custom span name formatter
 //
 // Example:
-//   WithSpanNameFormatter(func(operation string, req *http.Request) string {
-//       return fmt.Sprintf("%s %s", req.Method, req.URL.Path)
-//   })
+//
+//	WithSpanNameFormatter(func(operation string, req *http.Request) string {
+//	    return fmt.Sprintf("%s %s", req.Method, req.URL.Path)
+//	})
 func WithSpanNameFormatter(formatter SpanNameFormatter) Option {
 	return optionFunc(func(c *config) {
 		c.SpanNameFormatter = formatter
@@ -98,12 +100,12 @@ func WithSpanNameFormatter(formatter SpanNameFormatter) Option {
 func HealthCheckFilter() Filter {
 	return func(req *http.Request) bool {
 		path := req.URL.Path
-		return path != "/health" && 
-			   path != "/healthz" && 
-			   path != "/ping" && 
-			   path != "/ready" && 
-			   path != "/live" &&
-			   path != "/metrics"
+		return path != "/health" &&
+			path != "/healthz" &&
+			path != "/ping" &&
+			path != "/ready" &&
+			path != "/live" &&
+			path != "/metrics"
 	}
 }
 
