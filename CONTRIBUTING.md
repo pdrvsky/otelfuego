@@ -105,9 +105,9 @@ For new features:
 
 ## Code Organization
 
-- `otelfuego/fuego.go` - Core middleware implementation
-- `otelfuego/config.go` - Configuration and options
-- `otelfuego/example_test.go` - Tests and usage examples
+- `fuego.go` - Core middleware implementation
+- `config.go` - Configuration and options
+- `middleware_test.go` - Tests and usage examples
 
 ## Questions?
 

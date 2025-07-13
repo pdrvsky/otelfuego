@@ -34,7 +34,7 @@ package main
 
 import (
     "github.com/go-fuego/fuego"
-    "github.com/pdrvsky/otelfuego/otelfuego"
+    "github.com/pdrvsky/otelfuego"
 )
 
 func main() {
@@ -209,7 +209,7 @@ import (
     "os"
     
     "github.com/go-fuego/fuego"
-    "github.com/pdrvsky/otelfuego/otelfuego"
+    "github.com/pdrvsky/otelfuego"
     
     "go.opentelemetry.io/otel"
     "go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
@@ -341,7 +341,7 @@ server.Use(func(next http.Handler) http.Handler {
 ### After (using otelfuego)
 
 ```go
-import "github.com/pdrvsky/otelfuego/otelfuego"
+import "github.com/pdrvsky/otelfuego"
 
 server.Use(otelfuego.Middleware("my-service"))
 ```
