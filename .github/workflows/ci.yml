@@ -47,7 +47,12 @@ jobs:
     - name: Run go vet
       run: go vet ./...
 
-    - name: Run tests
+    - name: Run tests (Windows)
+      if: matrix.os == 'windows-latest'
+      run: go test -race ./...
+
+    - name: Run tests (Unix)
+      if: matrix.os != 'windows-latest'
       run: go test -race -coverprofile=coverage.out -covermode=atomic ./...
 
     - name: Upload coverage to Codecov

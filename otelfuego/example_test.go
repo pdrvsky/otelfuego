@@ -20,7 +20,7 @@ func TestMiddleware_BasicUsage(t *testing.T) {
 		sdktrace.WithSyncer(exporter),
 		sdktrace.WithSampler(sdktrace.AlwaysSample()),
 	)
-	defer tp.Shutdown(context.Background())
+	defer func() { _ = tp.Shutdown(context.Background()) }()
 
 	// Setup middleware
 	middleware := otelfuego.Middleware("test-service",
@@ -30,7 +30,7 @@ func TestMiddleware_BasicUsage(t *testing.T) {
 	// Create test handler
 	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("Hello World"))
+		_, _ = w.Write([]byte("Hello World"))
 	}))
 
 	// Create test request
@@ -64,7 +64,7 @@ func TestMiddleware_WithFilter(t *testing.T) {
 		sdktrace.WithSyncer(exporter),
 		sdktrace.WithSampler(sdktrace.AlwaysSample()),
 	)
-	defer tp.Shutdown(context.Background())
+	defer func() { _ = tp.Shutdown(context.Background()) }()
 
 	// Setup middleware with health check filter
 	middleware := otelfuego.Middleware("test-service",
@@ -77,7 +77,7 @@ func TestMiddleware_WithFilter(t *testing.T) {
 	// Create test handler
 	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("OK"))
+		_, _ = w.Write([]byte("OK"))
 	}))
 
 	// Test filtered request (should not create span)
@@ -110,7 +110,7 @@ func TestMiddleware_WithCustomSpanNameFormatter(t *testing.T) {
 		sdktrace.WithSyncer(exporter),
 		sdktrace.WithSampler(sdktrace.AlwaysSample()),
 	)
-	defer tp.Shutdown(context.Background())
+	defer func() { _ = tp.Shutdown(context.Background()) }()
 
 	// Setup middleware with custom span name formatter
 	middleware := otelfuego.Middleware("test-service",
@@ -152,7 +152,7 @@ func TestMiddleware_DistributedTracing(t *testing.T) {
 		sdktrace.WithSyncer(exporter),
 		sdktrace.WithSampler(sdktrace.AlwaysSample()),
 	)
-	defer tp.Shutdown(context.Background())
+	defer func() { _ = tp.Shutdown(context.Background()) }()
 
 	// Setup propagators
 	propagator := propagation.NewCompositeTextMapPropagator(
@@ -174,7 +174,6 @@ func TestMiddleware_DistributedTracing(t *testing.T) {
 	// Create parent span context
 	tracer := tp.Tracer("test")
 	parentCtx, parentSpan := tracer.Start(context.Background(), "parent-span")
-	defer parentSpan.End()
 
 	// Create request with trace context headers
 	req := httptest.NewRequest("GET", "/test", nil)
@@ -184,6 +183,9 @@ func TestMiddleware_DistributedTracing(t *testing.T) {
 
 	// Execute request
 	handler.ServeHTTP(w, req)
+	
+	// End parent span so it gets exported
+	parentSpan.End()
 
 	// Verify spans
 	spans := exporter.GetSpans()
@@ -221,11 +223,11 @@ func ExampleMiddleware() {
 	// Create a simple handler
 	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("Hello World"))
+		_, _ = w.Write([]byte("Hello World"))
 	}))
 
 	// Use with your HTTP server
-	http.ListenAndServe(":8080", handler)
+	_ = http.ListenAndServe(":8080", handler)
 }
 
 func ExampleMiddleware_withOptions() {
@@ -243,11 +245,11 @@ func ExampleMiddleware_withOptions() {
 	// Create a simple handler
 	handler := middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("Hello World"))
+		_, _ = w.Write([]byte("Hello World"))
 	}))
 
 	// Use with your HTTP server
-	http.ListenAndServe(":8080", handler)
+	_ = http.ListenAndServe(":8080", handler)
 }
 
 func ExampleHealthCheckFilter() {
@@ -261,7 +263,7 @@ func ExampleHealthCheckFilter() {
 		w.WriteHeader(http.StatusOK)
 	}))
 
-	http.ListenAndServe(":8080", handler)
+	_ = http.ListenAndServe(":8080", handler)
 }
 
 func ExampleCombineFilters() {
@@ -281,5 +283,5 @@ func ExampleCombineFilters() {
 		w.WriteHeader(http.StatusOK)
 	}))
 
-	http.ListenAndServe(":8080", handler)
+	_ = http.ListenAndServe(":8080", handler)
 }
