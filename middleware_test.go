@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/pdrvsky/otelfuego/otelfuego"
+	"github.com/pdrvsky/otelfuego"
 	"go.opentelemetry.io/otel/propagation"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/sdk/trace/tracetest"
